@@ -1,0 +1,19 @@
+Configurando o Visual Studio 2017 para trabalhar com PThreads.
+
+- Copie todos os arquivos .h presentes na pasta "include" para o diretório:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include
+
+- Copie o arquivo pthreadVC2.lib da pasta lib_x86 para o diretório:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\lib\x86
+
+- No Visual Studio, após criar adequadamente um projeto para programação em C, vá em 
+  Exibir>Outras Janelas>Gerenciador de Propriedades e expanda a pasta Debug | Win32.
+  Duplo clique em Microsoft.Cpp.Win32.user, vá em
+  Propriedades Comuns>Vinculador>Entrada e Dependências adicionais, adicione pthreadVC2.lib
+
+- Por fim, localize a pasta onde você criou seu projeto (do trabalho)
+  Encontre a pasta Debug (caso não tenha encontrado, compile seu projeto primeiro. Mesmo que dê erro, ele criará a pasta pra você.)
+  Copie, para dentro dessa pasta Debug, o arquivo pthreadVC2.dll presente na pasta dll_x86_VC_(no-exceptions) que você recebeu.  
+
+- Pronto! Agora tudo deverá funcionar adequadamente!
+  Eu mesmo acabei de testar exaustivamente tudo isso.
