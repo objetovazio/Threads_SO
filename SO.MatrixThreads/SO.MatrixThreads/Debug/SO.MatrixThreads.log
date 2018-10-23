@@ -1,2 +1,3 @@
-﻿  Main.c
-  SO.MatrixThreads.vcxproj -> C:\GitHub\Threads_SO\SO.MatrixThreads\Debug\SO.MatrixThreads.exe
+﻿  funcAUX.c
+c:\users\vinicius\documents\github\threads_so\so.matrixthreads\so.matrixthreads\funcaux.c(19): warning C4244: 'função': conversão de 'time_t' para 'unsigned int', possível perda de dados
+LINK : fatal error LNK1561: pontos de entrada devem ser definidos
