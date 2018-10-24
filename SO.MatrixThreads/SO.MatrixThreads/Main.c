@@ -2,68 +2,101 @@
 #define _CRT_SECURE_NO_WARNINGS 1 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 1 
 
-// Exemplo 1: Hello World! com PThreads
+
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "funcAUX.h"
 
-void *thread(void *vargp);
+int Nprimo = 0;
 
-int main()
-{
-	pthread_t tid;  // estrutura que define uma thread
-	printf("hello world da thread principal!\n");
+int main() {
+	int Tab[DIM][DIM];
+	int blocos[NTHREAD];
+	int indbloc = 0;
 
-	// cria uma thread com os atributos definidos em tid, opções padrão null,
-	// thread é função que contém o código da thread e não há parametros de entrada (ou seja, null)
-	pthread_create(&tid, null, thread, null);
+	inicializablocos(blocos);
+	preencheMat(Tab);
 
-	// espera a thread "tid" terminar e não captura seu valor de retorno retorno (null)
-	pthread_join(tid, null);
+	indbloc = setbloco(blocos);
+
+	while (indbloc != -1) {
+		Nprimo = contaPrimoPED(Tab, Nprimo, indbloc);
+		printf("PED %d|\n", indbloc);
+		imprimePED(Tab, indbloc);
+		indbloc = setbloco(blocos);
+	}
+	printf("Geral|\n");
+	imprimeMat(Tab);
+
+	printf("Numero de primos: %d\n", Nprimo);
 
 	system("pause");
-
-	// retorno null da thread principal. desnecessário.
-	pthread_exit((void *)null);
+	return 0;
 }
+	
 
-void *thread(void *vargp)
-{
-	printf("hello world da thread criada pela thread principal!\n");
-	pthread_exit((void *)null);
-}
+// Exemplo 1: Hello World! com PThreads
+//#include <pthread.h>
+//#include <stdlib.h>
+//#include <stdio.h>
+//
+//void *thread(void *vargp);
+//
+//int main()
+//{
+//	pthread_t tid;  // estrutura que define uma thread
+//	printf("hello world da thread principal!\n");
+//
+//	 cria uma thread com os atributos definidos em tid, opções padrão NULL,
+//	 thread é função que contém o código da thread e não há parametros de entrada (ou seja, NULL)
+//	pthread_create(&tid, NULL, thread, NULL);
+//
+//	 espera a thread "tid" terminar e não captura seu valor de retorno retorno (NULL)
+//	pthread_join(tid, NULL);
+//
+//	system("pause");
+//
+//	 retorno NULL da thread principal. desnecessário.
+//	pthread_exit((void *)NULL);
+//}
+//
+//void *thread(void *vargp)
+//{
+//	printf("hello world da thread criada pela thread principal!\n");
+//	pthread_exit((void *)NULL);
+//}
 // --- Fim Exemplo 1 ---
 
 
 // Exemplo 2: Escopo de variáveis
-/*
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
+//
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <pthread.h>
+//
+//int global;
+//void *thr_func(void *arg);
+//
+//int main(void)
+//{
+//	pthread_t tid;
+//	global = 20;
+//	printf("thread principal: %d\n", global);
+//	pthread_create(&tid, NULL, thr_func, NULL);
+//	pthread_join(tid, NULL);
+//	printf("thread principal: %d\n", global);
+//	system("pause");
+//	return 0;
+//}
+//
+//void *thr_func(void *arg)
+//{
+//	global = 40;
+//	printf("novo thread: %d\n", global);
+//	return NULL;
+//}
 
-int global;
-void *thr_func(void *arg);
-
-int main(void)
-{
-	pthread_t tid;
-	global = 20;
-	printf("thread principal: %d\n", global);
-	pthread_create(&tid, null, thr_func, null);
-	pthread_join(tid, null);
-	printf("thread principal: %d\n", global);
-	system("pause");
-	return 0;
-}
-
-void *thr_func(void *arg)
-{
-	global = 40;
-	printf("novo thread: %d\n", global);
-	return null;
-}
-*/
 // --- Fim Exemplo 2 ---
 
 //// --- Exemplo 3: Multiplas Threads com parâmetro
