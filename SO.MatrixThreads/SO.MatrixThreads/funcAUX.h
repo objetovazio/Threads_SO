@@ -1,21 +1,22 @@
 #pragma once
 
-#define DIM 4 //Dimenção da matriz
-#define NTHREAD 2 //Número de threads
+#define DIM (int) 10000 //Dimenção da matriz
+#define NTHREAD 100 //Número de threads
 #define PED DIM/NTHREAD //Essa divição tem que dar exata, (DIM % NTHREAD = 0 ), NTHREAD tem q ser divisor de DIM
 #define QPED 
 
 int primo(int num);
 
-void preencheMat(int mat[][DIM]);
+int** criaMat();
 
+int contaPrimoPED(int** mat, int Nprimo, int indbloc);
 
-int contaPrimoPED(int mat[][DIM], int Nprimo, int indbloc);
+void imprimeMat(int** mat);
 
-void imprimeMat(int mat[][DIM]);
-
-void imprimePED(int mat[][DIM], int indbloc);
+void imprimePED(int** mat, int indbloc);
 
 void inicializablocos(int vet[]);
 
 int setbloco(int vet[]);
+
+void liberaMat(int** mat);

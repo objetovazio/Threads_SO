@@ -11,23 +11,22 @@
 int Nprimo = 0;
 
 int main() {
-	int Tab[DIM][DIM];
+
+	int**Tab;
+	Tab = criaMat();
 	int blocos[NTHREAD];
 	int indbloc = 0;
 
 	inicializablocos(blocos);
-	preencheMat(Tab);
 
 	indbloc = setbloco(blocos);
 
 	while (indbloc != -1) {
 		Nprimo = contaPrimoPED(Tab, Nprimo, indbloc);
-		printf("PED %d|\n", indbloc);
-		imprimePED(Tab, indbloc);
+		printf("PED %d|ok\n", indbloc);
 		indbloc = setbloco(blocos);
 	}
-	printf("Geral|\n");
-	imprimeMat(Tab);
+	liberaMat(Tab);
 
 	printf("Numero de primos: %d\n", Nprimo);
 

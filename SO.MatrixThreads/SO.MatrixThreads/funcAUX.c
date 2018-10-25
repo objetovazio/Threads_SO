@@ -19,17 +19,21 @@ int primo(int num) {
 	}
 }
 
-void preencheMat(int mat[][DIM]) {
+int** criaMat() {
 	srand(time(NULL));//atualiza a semente
 
-	for (int linha = 0; linha < DIM; linha++) {
-		for (int coluna = 0; coluna < DIM; coluna++) {
-			mat[linha][coluna] = (rand() % 10);
+	int **m = (int**)malloc(DIM * sizeof(int*));
+
+	for (int i = 0; i < DIM; i++) {
+		m[i] = (int*)malloc(DIM * sizeof(int)); 
+		for (int j = 0; j < DIM; j++) {
+			m[i][j] = (rand() % 29990);
 		}
 	}
+	return m;
 }
 
-int contaPrimoPED(int mat[][DIM], int Nprimo, int indbloc) {
+int contaPrimoPED(int** mat, int Nprimo, int indbloc) {
 
 	int cost = PED * indbloc;
 
@@ -44,7 +48,7 @@ int contaPrimoPED(int mat[][DIM], int Nprimo, int indbloc) {
 	return Nprimo;
 }
 
-void imprimeMat(int mat[][DIM]) {
+void imprimeMat(int** mat) {
 
 	for (int linha = 0; linha < DIM; ++linha) {
 		for (int coluna = 0; coluna < DIM; ++coluna) {
@@ -55,7 +59,7 @@ void imprimeMat(int mat[][DIM]) {
 	printf("\n");
 }
 
-void imprimePED(int mat[][DIM], int indbloc) {
+void imprimePED(int** mat, int indbloc) {
 
 	int cost = PED * indbloc;
 
@@ -83,5 +87,12 @@ int setbloco(int vet[]) {
 		}
 	}
 	return -1;//todos ocupados
+}
+
+void liberaMat(int** mat) {
+	for (int i = 0; i < DIM; i++) {
+		free(mat[i]);
+	}
+	free(mat);
 }
 
