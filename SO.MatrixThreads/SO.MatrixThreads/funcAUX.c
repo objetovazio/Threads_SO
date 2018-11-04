@@ -171,24 +171,24 @@ void contagem_thread(void *id)
 	int count_local = 0;
 	int quantidade_posicoes_macrobloco = tam_linhas_bloco * tam_colunas_bloco;
 
-	while (contador_blocos < total_blocos)
-	{
-		// Início da região crítica
-		//pthread_mutex_lock(&mutex_bloco);
-		//blocoLocal.linha_atual = bloco_verificado->linha_atual;
-		//blocoLocal.coluna_atual = bloco_verificado->coluna_atual;
+	//while (contador_blocos < total_blocos)
+	//{
+	////	 Início da região crítica
+	//	pthread_mutex_lock(&mutex_bloco);
+	//	blocoLocal.linha_atual = bloco_verificado->linha_atual;
+	//	blocoLocal.coluna_atual = bloco_verificado->coluna_atual;
 
-		//blocoLocal.coluna_atual += quantidade_posicoes_macrobloco;
-		//int tem_incremento = blocoLocal.coluna_atual / tam_colunas_matriz;
-		//if (tem_incremento > 0)
-		//{
-		//	blocoLocal.linha_atual += tem_incremento;
-		//	blocoLocal.coluna_atual = blocoLocal.coluna_atual % tam_colunas_matriz;
-		//}
+	//	blocoLocal.coluna_atual += quantidade_posicoes_macrobloco;
+	//	int tem_incremento = blocoLocal.coluna_atual / tam_colunas_matriz;
+	//	if (tem_incremento > 0)
+	//	{
+	//		blocoLocal.linha_atual += tem_incremento;
+	//		blocoLocal.coluna_atual = blocoLocal.coluna_atual % tam_colunas_matriz;
+	//	}
 
-		//// Fim região crítica
-		//pthread_mutex_unlock(&mutex_bloco);
-	}
+	//	// Fim região crítica
+	//	pthread_mutex_unlock(&mutex_bloco);
+	//}
 
 	printf("Thread #%hi iniciada.\n", thread_id);
 }
