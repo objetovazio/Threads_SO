@@ -259,3 +259,26 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+*.db
+SO.MatrixThreads/.vs/SO.MatrixThreads/v15/.suo
+SO.MatrixThreads/.vs/SO.MatrixThreads/v15/Browse.VC.db
+SO.MatrixThreads/Debug/SO.MatrixThreads.pdb
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.log
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.tlog/CL.command.1.tlog
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.tlog/CL.read.1.tlog
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.tlog/CL.write.1.tlog
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.tlog/link.command.1.tlog
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.tlog/link.read.1.tlog
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.tlog/link.write.1.tlog
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.tlog/SO.MatrixThreads.lastbuildstate
+SO.MatrixThreads/SO.MatrixThreads/Debug/SO.MatrixThreads.tlog/unsuccessfulbuild
+SO.MatrixThreads/SO.MatrixThreads/Debug/vc141.idb
+SO.MatrixThreads/SO.MatrixThreads/Debug/vc141.pdb
+*.db
+*.db
+SO.MatrixThreads/.vs/SO.MatrixThreads/v15/.suo
+*.pdb
+*.tlog
+*.tlog
+*.tlog
+*.idb
