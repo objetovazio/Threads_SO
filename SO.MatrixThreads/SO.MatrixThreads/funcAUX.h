@@ -9,8 +9,8 @@
 #define FALSE 0
 
 struct bloco {
-	int linhaAtual;
-	int colunaAtual;
+	int linha_atual;
+	int coluna_atual;
 };
 typedef struct bloco tBloco, *pBloco;
 
@@ -51,9 +51,9 @@ double tempo_total_helper(double inicio, double fim);
  */
 void imprimir_matriz();
 
-int contagem_paralela(pthread_t *threads, tBloco *blocoVerificado);
+int contagem_paralela(struct pthread_t *threads, struct tBloco *blocoVerificado);
 
-int contagem_thread(void *id);
+void contagem_thread(void *id);
 
 int contagem_numeros_primos(int isSerial);
 

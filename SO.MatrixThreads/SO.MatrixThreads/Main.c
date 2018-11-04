@@ -5,31 +5,45 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "funcAUX.h"
+#include <time.h>
 
-#define LINHA_MATRIZ 3		// Número total de linhas da matriz
-#define COLUNA_MATRIZ 3		// Número total de colunas da matriz
+#define LINHA_MATRIZ 15		// Número total de linhas da matriz
+#define COLUNA_MATRIZ 15	// Número total de colunas da matriz
 
-#define LINHA_MB 1			// Quantidade de linhas de um macrobloco
-#define COLUNA_MB 1				// Quantidade de colunas de um macrobloco
+#define LINHA_MB 2			// Quantidade de linhas de um macrobloco
+#define COLUNA_MB 2			// Quantidade de colunas de um macrobloco
 
-#define VALOR_MAX 29999         // Valor máximo a ser preenchido na matriz
-#define VALOR_MIN 0				// Valor mínimo a ser preenchido na matriz
+#define VALOR_MAX 29999     // Valor máximo a ser preenchido na matriz
+#define VALOR_MIN 0			// Valor mínimo a ser preenchido na matriz
 
-#define NUM_THREADS 1 //Número de threads
-#define IS_SERIAL 1
-#define SEED 7
+#define NUM_THREADS 2		// Número de threads
+#define IS_SERIAL 0			// Se é modo serial
+#define SEED 7				
 
 int total_numeros_primos = 0;
+double inicio_tempo_execucao, fim_tempo_execucao, tempo_total_execucao = 0;
 
 int main() {
+	printf("\t\tIniciando o programa:\n\n");
+	inicio_tempo_execucao = clock();
+
+	printf("Iniciando variaveis.\n");
 	iniciar_aux(LINHA_MATRIZ, COLUNA_MATRIZ, LINHA_MB, COLUNA_MB, NUM_THREADS);
+
+	printf("Instanciando matriz.\n");
 	instanciar_matriz(LINHA_MATRIZ, COLUNA_MATRIZ);
+
+	printf("Preenchendo matriz\n");
 	preencher_matriz(VALOR_MIN, VALOR_MAX, SEED);
+
+	printf("Calculando Primos\n");
 	total_numeros_primos = contagem_numeros_primos(IS_SERIAL);
+	fim_tempo_execucao = clock();
 
-	printf("Total de numeros primos encontrados: %d\n", total_numeros_primos);
+	printf("\nTotal de numeros primos encontrados: %d\n", total_numeros_primos);
+	printf("Tempo total de execucao: %.20lf\n\n", tempo_total_helper(inicio_tempo_execucao, fim_tempo_execucao));
 
-	imprimir_matriz();
+	//imprimir_matriz();
 
 	/*int blocos[NUM_THREAD];
 	int indbloc = 0;

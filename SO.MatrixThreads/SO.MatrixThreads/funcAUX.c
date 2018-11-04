@@ -5,23 +5,18 @@
 #include "funcAUX.h"
 
 int tam_linhas_matriz, tam_colunas_matriz, num_threads, total_primos;
-
-int tam_linhas_bloco, tam_colunas_bloco, max_blocos, count_blocos;
-
-double inicio_tempo_execucao, fim_tempo_execucao, tempo_total_execucao = 0;
-
+int tam_linhas_bloco, tam_colunas_bloco, total_blocos, contador_blocos;
 double inicio_tempo_bloco, fim_tempo_bloco;
-
 int **matriz;
-
 pthread_mutex_t mutex_bloco;
 pthread_mutex_t mutex_count_primos;
+tBloco *bloco_verificado;
 
 void iniciar_aux(int LINHA_MATRIZ, int COLUNA_MATRIZ, int LINHA_MB, int COLUNA_MB, int NUM_THREADS)
 {
 	tam_linhas_matriz = LINHA_MATRIZ;
 	tam_colunas_matriz = COLUNA_MATRIZ;
-	tam_linhas_matriz = LINHA_MB;
+	tam_linhas_bloco = LINHA_MB;
 	tam_colunas_bloco = COLUNA_MATRIZ;
 	num_threads = NUM_THREADS;
 }
@@ -29,7 +24,6 @@ void iniciar_aux(int LINHA_MATRIZ, int COLUNA_MATRIZ, int LINHA_MB, int COLUNA_M
 void instanciar_matriz(int qtd_linhas, int qtd_colunas)
 {
 	inicio_tempo_bloco = clock();
-
 
 	int **m = (int**)malloc(qtd_linhas * sizeof(int*));
 
@@ -115,6 +109,7 @@ int contagem_numeros_primos(int isSerial)
 	int resultado;
 	if (isSerial)
 	{
+		printf("\t\t Modo Serial : %d X %d\n\n", tam_linhas_matriz, tam_colunas_matriz);
 		inicio_tempo_bloco = clock();
 		resultado = contagem_serial(matriz);
 		fim_tempo_bloco = clock();
@@ -123,13 +118,13 @@ int contagem_numeros_primos(int isSerial)
 	else
 	{
 		pthread_t *threads = (pthread_t*)malloc(num_threads * sizeof(pthread_t*));
-		tBloco *blocoVerificado =  (tBloco*)malloc(sizeof(tBloco*));;
-		blocoVerificado->linhaAtual = blocoVerificado->colunaAtual = 0;
+		tBloco *blocoVerificado = (tBloco*)malloc(sizeof(tBloco*));;
+		blocoVerificado->linha_atual = blocoVerificado->coluna_atual = 0;
 
 		pthread_mutex_init(&mutex_count_primos, NULL);
 		pthread_mutex_init(&mutex_bloco, NULL);
 
-		max_blocos = (tam_linhas_matriz * tam_colunas_matriz) / (tam_linhas_bloco * tam_colunas_bloco);
+		total_blocos = (tam_linhas_matriz * tam_colunas_matriz) / (tam_linhas_bloco * tam_colunas_bloco);
 
 		inicio_tempo_bloco = clock();
 		resultado = contagem_paralela(threads, blocoVerificado);
@@ -143,24 +138,59 @@ int contagem_numeros_primos(int isSerial)
 
 int contagem_paralela(pthread_t *threads, tBloco *blocoVerificado)
 {
+	bloco_verificado = blocoVerificado;
+
 	for (int i = 0; i < num_threads; i++)
 	{
 		int *thread_id = (int*)malloc(sizeof(int*));
 		*thread_id = i;
 
-		pthread_create(&threads[i], NULL, contagem_thread, thread_id);
+		if (pthread_create(&threads[i], NULL, contagem_thread, thread_id) != 0)
+		{
+			free(thread_id);
+			printf("A Thread #%d falhou.", i);
+			exit(1);
+		}
+	}
+
+	for (short i = 0; i < num_threads; i++) {
+		if (pthread_join(threads[i], NULL) != 0) {
+			printf("erro ao retornar a thread %hi.\n", i);
+			exit(1);
+		}
 	}
 
 	return 0;
 }
 
-int contagem_thread(void *id)
+void contagem_thread(void *id)
 {
 	short thread_id = *((short*)id);
 	free(id);
-	printf("Thread #%hi iniciada.\n", thread_id);
+	tBloco blocoLocal;
+	int count_local = 0;
+	int quantidade_posicoes_macrobloco = tam_linhas_bloco * tam_colunas_bloco;
 
-	return 0;
+	while (contador_blocos < total_blocos)
+	{
+		// Início da região crítica
+		//pthread_mutex_lock(&mutex_bloco);
+		//blocoLocal.linha_atual = bloco_verificado->linha_atual;
+		//blocoLocal.coluna_atual = bloco_verificado->coluna_atual;
+
+		//blocoLocal.coluna_atual += quantidade_posicoes_macrobloco;
+		//int tem_incremento = blocoLocal.coluna_atual / tam_colunas_matriz;
+		//if (tem_incremento > 0)
+		//{
+		//	blocoLocal.linha_atual += tem_incremento;
+		//	blocoLocal.coluna_atual = blocoLocal.coluna_atual % tam_colunas_matriz;
+		//}
+
+		//// Fim região crítica
+		//pthread_mutex_unlock(&mutex_bloco);
+	}
+
+	printf("Thread #%hi iniciada.\n", thread_id);
 }
 
 //
