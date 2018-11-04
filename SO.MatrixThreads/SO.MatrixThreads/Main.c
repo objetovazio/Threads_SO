@@ -2,19 +2,36 @@
 #define _CRT_SECURE_NO_WARNINGS 1 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 1 
 
-
-#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "funcAUX.h"
 
-int Nprimo = 0;
+#define LINHA_MATRIZ 3		// Número total de linhas da matriz
+#define COLUNA_MATRIZ 3		// Número total de colunas da matriz
+
+#define LINHA_MB 1			// Quantidade de linhas de um macrobloco
+#define COLUNA_MB 1				// Quantidade de colunas de um macrobloco
+
+#define VALOR_MAX 29999         // Valor máximo a ser preenchido na matriz
+#define VALOR_MIN 0				// Valor mínimo a ser preenchido na matriz
+
+#define NUM_THREADS 1 //Número de threads
+#define IS_SERIAL 1
+#define SEED 7
+
+int total_numeros_primos = 0;
 
 int main() {
+	iniciar_aux(LINHA_MATRIZ, COLUNA_MATRIZ, LINHA_MB, COLUNA_MB, NUM_THREADS);
+	instanciar_matriz(LINHA_MATRIZ, COLUNA_MATRIZ);
+	preencher_matriz(VALOR_MIN, VALOR_MAX, SEED);
+	total_numeros_primos = contagem_numeros_primos(IS_SERIAL);
 
-	int**Tab;
-	Tab = criaMat();
-	int blocos[NTHREAD];
+	printf("Total de numeros primos encontrados: %d\n", total_numeros_primos);
+
+	imprimir_matriz();
+
+	/*int blocos[NUM_THREAD];
 	int indbloc = 0;
 
 	inicializablocos(blocos);
@@ -22,13 +39,13 @@ int main() {
 	indbloc = setbloco(blocos);
 
 	while (indbloc != -1) {
-		Nprimo = contaPrimoPED(Tab, Nprimo, indbloc);
+		total_numeros_primos = contaPrimoPED(Tab, total_numeros_primos, indbloc);
 		printf("PED %d|ok\n", indbloc);
 		indbloc = setbloco(blocos);
 	}
 	liberaMat(Tab);
 
-	printf("Numero de primos: %d\n", Nprimo);
+	printf("Numero de primos: %d\n", Nprimo);*/
 
 	system("pause");
 	return 0;
