@@ -8,10 +8,10 @@
 #include <time.h>
 
 #define LINHA_MATRIZ 15		// Número total de linhas da matriz
-#define COLUNA_MATRIZ 15	// Número total de colunas da matriz
+#define COLUNA_MATRIZ 15    // Número total de colunas da matriz
 
-#define LINHA_MB 2			// Quantidade de linhas de um macrobloco
-#define COLUNA_MB 2			// Quantidade de colunas de um macrobloco
+#define LINHA_MB 10			// Quantidade de linhas de um macrobloco
+#define COLUNA_MB 10			// Quantidade de colunas de um macrobloco
 
 #define VALOR_MAX 29999     // Valor máximo a ser preenchido na matriz
 #define VALOR_MIN 0			// Valor mínimo a ser preenchido na matriz
@@ -45,23 +45,7 @@ int main() {
 
 	//imprimir_matriz();
 
-	/*int blocos[NUM_THREAD];
-	int indbloc = 0;
-
-	inicializablocos(blocos);
-
-	indbloc = setbloco(blocos);
-
-	while (indbloc != -1) {
-		total_numeros_primos = contaPrimoPED(Tab, total_numeros_primos, indbloc);
-		printf("PED %d|ok\n", indbloc);
-		indbloc = setbloco(blocos);
-	}
-	liberaMat(Tab);
-
-	printf("Numero de primos: %d\n", Nprimo);*/
-
-	system("pause");
+	getchar();
 	return 0;
 }
 	

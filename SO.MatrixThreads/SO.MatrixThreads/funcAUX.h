@@ -9,11 +9,13 @@
 #define FALSE 0
 
 struct bloco {
-	int linha_atual;
-	int coluna_atual;
+	int linha_inicial;
+	int coluna_inicial;
+
+	int linha_final;
+	int coluna_final;
 };
 typedef struct bloco tBloco, *pBloco;
-
 
 /**
  * Inicializa variáveis globais da matriz
@@ -39,7 +41,7 @@ int contagem_serial(int **matriz);
 /**
  * Verifica se o número passado como parâmetro é Primo
  */
-int IsPrimo(int num);
+int is_primo(int num);
 
 /**
  * Retorna o tempo total dado o intevalo passado por parâmetro
@@ -53,12 +55,9 @@ void imprimir_matriz();
 
 int contagem_paralela(struct pthread_t *threads, struct tBloco *blocoVerificado);
 
-void contagem_thread(void *id);
+int contagem_thread(void *id);
 
 int contagem_numeros_primos(int isSerial);
-
-
-
 
 
 /*int contaPrimoPED(int** mat, int Nprimo, int indbloc);

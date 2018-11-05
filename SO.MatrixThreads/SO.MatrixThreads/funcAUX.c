@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h>
+#include <math.h>
 #include "funcAUX.h"
 
 int tam_linhas_matriz, tam_colunas_matriz, num_threads, total_primos;
@@ -17,7 +18,7 @@ void iniciar_aux(int LINHA_MATRIZ, int COLUNA_MATRIZ, int LINHA_MB, int COLUNA_M
 	tam_linhas_matriz = LINHA_MATRIZ;
 	tam_colunas_matriz = COLUNA_MATRIZ;
 	tam_linhas_bloco = LINHA_MB;
-	tam_colunas_bloco = COLUNA_MATRIZ;
+	tam_colunas_bloco = COLUNA_MB;
 	num_threads = NUM_THREADS;
 }
 
@@ -64,14 +65,14 @@ int contagem_serial(int **matriz)
 	{
 		for (int j = 0; j < tam_colunas_matriz; j++)
 		{
-			if (IsPrimo(matriz[i][j])) total_primos++;
+			if (is_primo(matriz[i][j])) total_primos++;
 		}
 	}
 
 	return total_primos;
 }
 
-int IsPrimo(int num) {
+int is_primo(int num) {
 
 	if (num < 2) return FALSE;
 	else if (num >= 2 && num <= 5) return TRUE;
@@ -119,18 +120,16 @@ int contagem_numeros_primos(int isSerial)
 	{
 		pthread_t *threads = (pthread_t*)malloc(num_threads * sizeof(pthread_t*));
 		tBloco *blocoVerificado = (tBloco*)malloc(sizeof(tBloco*));;
-		blocoVerificado->linha_atual = blocoVerificado->coluna_atual = 0;
+		blocoVerificado->linha_inicial = blocoVerificado->coluna_inicial = 0;
 
 		pthread_mutex_init(&mutex_count_primos, NULL);
 		pthread_mutex_init(&mutex_bloco, NULL);
 
-		total_blocos = (tam_linhas_matriz * tam_colunas_matriz) / (tam_linhas_bloco * tam_colunas_bloco);
+		total_blocos = ceil((tam_linhas_matriz * tam_colunas_matriz) / (double)(tam_linhas_bloco * tam_colunas_bloco));
 
 		inicio_tempo_bloco = clock();
 		resultado = contagem_paralela(threads, blocoVerificado);
 		fim_tempo_bloco = clock();
-
-		//contagem_paralela(matriz);
 	}
 
 	return resultado;
@@ -148,49 +147,89 @@ int contagem_paralela(pthread_t *threads, tBloco *blocoVerificado)
 		if (pthread_create(&threads[i], NULL, contagem_thread, thread_id) != 0)
 		{
 			free(thread_id);
-			printf("A Thread #%d falhou.", i);
+			printf("Falha na Thread #%d.\n", i);
 			exit(1);
 		}
 	}
 
-	for (short i = 0; i < num_threads; i++) {
-		if (pthread_join(threads[i], NULL) != 0) {
-			printf("erro ao retornar a thread %hi.\n", i);
+	for (int i = 0; i < num_threads; i++) {
+		if (pthread_join(threads[i], NULL)) {
+			printf("Falha ao retornar a Thread %hi.\n", i);
 			exit(1);
 		}
 	}
 
-	return 0;
+	return total_primos;
 }
 
-void contagem_thread(void *id)
+int contagem_thread(void *id)
 {
 	short thread_id = *((short*)id);
 	free(id);
-	tBloco blocoLocal;
-	int count_local = 0;
-	int quantidade_posicoes_macrobloco = tam_linhas_bloco * tam_colunas_bloco;
-
-	//while (contador_blocos < total_blocos)
-	//{
-	////	 Início da região crítica
-	//	pthread_mutex_lock(&mutex_bloco);
-	//	blocoLocal.linha_atual = bloco_verificado->linha_atual;
-	//	blocoLocal.coluna_atual = bloco_verificado->coluna_atual;
-
-	//	blocoLocal.coluna_atual += quantidade_posicoes_macrobloco;
-	//	int tem_incremento = blocoLocal.coluna_atual / tam_colunas_matriz;
-	//	if (tem_incremento > 0)
-	//	{
-	//		blocoLocal.linha_atual += tem_incremento;
-	//		blocoLocal.coluna_atual = blocoLocal.coluna_atual % tam_colunas_matriz;
-	//	}
-
-	//	// Fim região crítica
-	//	pthread_mutex_unlock(&mutex_bloco);
-	//}
-
 	printf("Thread #%hi iniciada.\n", thread_id);
+	tBloco bloco_local;
+	int contador_primos_local = 0;
+	const int quantidade_posicoes_macrobloco = tam_linhas_bloco * tam_colunas_bloco;
+
+	while (contador_blocos < total_blocos)
+	{
+		//	 Início da região crítica de macrobloco
+		pthread_mutex_lock(&mutex_bloco);
+
+		/* Guarda posições onde se inicia o macrobloco */
+		bloco_local.linha_inicial = bloco_verificado->linha_inicial;   
+		bloco_local.coluna_inicial = bloco_verificado->coluna_inicial; 
+
+		/* Guarda onde acaba o macrobloco */
+		bloco_local.linha_final = bloco_local.linha_inicial + tam_linhas_bloco;	
+		bloco_local.coluna_final = bloco_local.coluna_inicial + tam_colunas_bloco;
+
+		/* Atualiza o bloco que representa a matriz para controlar o que já foi separado para verificação */
+		bloco_verificado->coluna_inicial += tam_colunas_bloco;
+		int tem_incremento_linha = bloco_verificado->coluna_inicial / tam_colunas_matriz;
+		if (tem_incremento_linha > 0)
+		{
+			bloco_verificado->linha_inicial += tam_linhas_bloco;
+			bloco_verificado->coluna_inicial = 0;
+		}
+
+		if(bloco_local.coluna_final > tam_colunas_matriz)
+		{
+			bloco_local.coluna_final = tam_colunas_matriz;
+		}
+
+		contador_blocos++;
+
+		// Fim região crítica
+		pthread_mutex_unlock(&mutex_bloco);
+
+		int linha_index = bloco_local.linha_inicial;
+		int coluna_index = bloco_local.coluna_inicial;
+
+		/* Looping pelo tamanho de elementos do macrobloco */
+		/* Para se leu todos os elementos ou se acabou a quantidade de linhas válidas da matriz */
+		for (int i = 0; i < quantidade_posicoes_macrobloco && linha_index < tam_linhas_matriz; i++)
+		{
+			if (is_primo(matriz[linha_index][coluna_index++])) contador_primos_local++;
+
+			if(coluna_index > tam_colunas_matriz || coluna_index >= bloco_local.coluna_final)
+			{
+				linha_index++;
+				coluna_index = bloco_local.coluna_inicial;
+			}
+		}
+
+		if(contador_primos_local > 0)
+		{
+			// Região crítica do comtador de primos
+			pthread_mutex_lock(&mutex_count_primos);
+			total_primos += contador_primos_local;
+			contador_primos_local = 0;
+			pthread_mutex_unlock(&mutex_count_primos);
+		}
+	}
+
+	return TRUE;
 }
 
 //
