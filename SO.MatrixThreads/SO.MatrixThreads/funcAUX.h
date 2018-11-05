@@ -55,7 +55,7 @@ void imprimir_matriz();
 
 int contagem_paralela(struct pthread_t *threads, struct tBloco *blocoVerificado);
 
-int contagem_thread(void *id);
+void* contagem_thread(void *id);
 
 int contagem_numeros_primos(int isSerial);
 

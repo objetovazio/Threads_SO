@@ -130,20 +130,24 @@ int contagem_numeros_primos(int isSerial)
 		inicio_tempo_bloco = clock();
 		resultado = contagem_paralela(threads, blocoVerificado);
 		fim_tempo_bloco = clock();
+
+		pthread_mutex_destroy(&mutex_bloco);
+		pthread_mutex_destroy(&mutex_count_primos);
 	}
 
 	return resultado;
 }
 
-int contagem_paralela(pthread_t *threads, tBloco *blocoVerificado)
+int contagem_paralela(pthread_t *threads, tBloco *bloco_verificado_local)
 {
-	bloco_verificado = blocoVerificado;
+	bloco_verificado = bloco_verificado_local;
 
 	for (int i = 0; i < num_threads; i++)
 	{
 		int *thread_id = (int*)malloc(sizeof(int*));
 		*thread_id = i;
 
+		/* Em caso de sucesso, pthread_create retorna 0 */
 		if (pthread_create(&threads[i], NULL, contagem_thread, thread_id) != 0)
 		{
 			free(thread_id);
@@ -153,7 +157,8 @@ int contagem_paralela(pthread_t *threads, tBloco *blocoVerificado)
 	}
 
 	for (int i = 0; i < num_threads; i++) {
-		if (pthread_join(threads[i], NULL)) {
+		/* Em caso de sucesso, pthread_join retorna 0 */
+		if (pthread_join(threads[i], NULL) != 0) {
 			printf("Falha ao retornar a Thread %hi.\n", i);
 			exit(1);
 		}
@@ -162,7 +167,7 @@ int contagem_paralela(pthread_t *threads, tBloco *blocoVerificado)
 	return total_primos;
 }
 
-int contagem_thread(void *id)
+void* contagem_thread(void *id)
 {
 	short thread_id = *((short*)id);
 	free(id);
@@ -177,11 +182,11 @@ int contagem_thread(void *id)
 		pthread_mutex_lock(&mutex_bloco);
 
 		/* Guarda posições onde se inicia o macrobloco */
-		bloco_local.linha_inicial = bloco_verificado->linha_inicial;   
-		bloco_local.coluna_inicial = bloco_verificado->coluna_inicial; 
+		bloco_local.linha_inicial = bloco_verificado->linha_inicial;
+		bloco_local.coluna_inicial = bloco_verificado->coluna_inicial;
 
 		/* Guarda onde acaba o macrobloco */
-		bloco_local.linha_final = bloco_local.linha_inicial + tam_linhas_bloco;	
+		bloco_local.linha_final = bloco_local.linha_inicial + tam_linhas_bloco;
 		bloco_local.coluna_final = bloco_local.coluna_inicial + tam_colunas_bloco;
 
 		/* Atualiza o bloco que representa a matriz para controlar o que já foi separado para verificação */
@@ -193,7 +198,7 @@ int contagem_thread(void *id)
 			bloco_verificado->coluna_inicial = 0;
 		}
 
-		if(bloco_local.coluna_final > tam_colunas_matriz)
+		if (bloco_local.coluna_final > tam_colunas_matriz)
 		{
 			bloco_local.coluna_final = tam_colunas_matriz;
 		}
@@ -212,14 +217,14 @@ int contagem_thread(void *id)
 		{
 			if (is_primo(matriz[linha_index][coluna_index++])) contador_primos_local++;
 
-			if(coluna_index > tam_colunas_matriz || coluna_index >= bloco_local.coluna_final)
+			if (coluna_index > tam_colunas_matriz || coluna_index >= bloco_local.coluna_final)
 			{
 				linha_index++;
 				coluna_index = bloco_local.coluna_inicial;
 			}
 		}
 
-		if(contador_primos_local > 0)
+		if (contador_primos_local > 0)
 		{
 			// Região crítica do comtador de primos
 			pthread_mutex_lock(&mutex_count_primos);
@@ -229,7 +234,8 @@ int contagem_thread(void *id)
 		}
 	}
 
-	return TRUE;
+	printf("Thread #%hi finalizada.\n", thread_id);
+	return 0;
 }
 
 //
