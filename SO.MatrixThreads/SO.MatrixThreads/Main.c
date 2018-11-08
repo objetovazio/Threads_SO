@@ -1,6 +1,4 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS 1 
-#define _WINSOCK_DEPRECATED_NO_WARNINGS 1 
 
 #pragma region Includes  
 #include <stdio.h>
@@ -13,14 +11,14 @@
 #define LINHA_MATRIZ 15000	// Número total de linhas da matriz
 #define COLUNA_MATRIZ 15000    // Número total de colunas da matriz
 
-#define LINHA_MB 150			// Quantidade de linhas de um macrobloco
-#define COLUNA_MB 150			// Quantidade de colunas de um macrobloco
+#define LINHA_MB 1			// Quantidade de linhas de um macrobloco
+#define COLUNA_MB 1		// Quantidade de colunas de um macrobloco
 
 #define VALOR_MAX 29999     // Valor máximo a ser preenchido na matriz
 #define VALOR_MIN 0			// Valor mínimo a ser preenchido na matriz
 
-#define NUM_THREADS 2		// Número de threads
-#define IS_SERIAL 0			// Se é modo serial
+#define NUM_THREADS 1		// Número de threads
+#define IS_SERIAL 1			// Se é modo serial
 #define SEED 7				
 
 #define TRUE 1					
@@ -80,6 +78,11 @@ double tempo_total_helper(double inicio, double fim);
  */
 void imprimir_matriz();
 
+/**
+ * Desaloca matriz
+ */
+void desalocar_matriz(int qtd_linhas, int qtd_colunas);
+
 int contagem_paralela(pthread_t threads[NUM_THREADS], tBloco *blocoVerificado);
 
 void* contagem_thread(void *id);
@@ -87,8 +90,8 @@ void* contagem_thread(void *id);
 int contagem_numeros_primos(int isSerial);
 #pragma endregion
 
-int main() {
-
+int main()
+{
 	printf("\t\t..::Iniciando o programa::..\n\n");
 	printf("Matrix: %dx%d\tMacrobloco: %dx%d\n", LINHA_MATRIZ, COLUNA_MATRIZ, LINHA_MB, COLUNA_MB);
 	printf("Serial: %s\t%d Threads\n\n", IS_SERIAL ? "Sim" : "Nao", NUM_THREADS);
@@ -105,7 +108,12 @@ int main() {
 	fim_tempo_execucao = clock();
 
 	printf("Total de numeros primos encontrados: %d\n", total_numeros_primos);
-	printf("Tempo total de execucao: %.7lf segs\n", tempo_total_helper(inicio_tempo_execucao, fim_tempo_execucao));
+	printf("Tempo total de execucao: %.3lf segs\n", tempo_total_helper(inicio_tempo_execucao, fim_tempo_execucao));
+
+	printf("\nDesalocando memoria.\n");
+	desalocar_matriz(LINHA_MATRIZ, COLUNA_MATRIZ);
+	printf("\n\t\t..:: Fim do Programa::..\n");
+
 
 	//imprimir_matriz();
 
@@ -127,9 +135,22 @@ void instanciar_matriz(int qtd_linhas, int qtd_colunas)
 
 	fim_tempo_bloco = clock();
 
-	printf("%.7lf segs\n", tempo_total_helper(inicio_tempo_bloco, fim_tempo_bloco));
+	printf("%.3lf segs\n", tempo_total_helper(inicio_tempo_bloco, fim_tempo_bloco));
 
 	matriz = m;
+}
+
+void desalocar_matriz(int qtd_linhas, int qtd_colunas)
+{
+
+	int **m = matriz;
+
+	for (int i = 0; i < qtd_linhas; i++)
+	{
+		free(m[i]);
+	}
+
+	free(m);
 }
 
 void preencher_matriz(int inicio, int fim, int seed)
@@ -147,7 +168,7 @@ void preencher_matriz(int inicio, int fim, int seed)
 	}
 
 	fim_tempo_bloco = clock();
-	printf("%.7lf segs\n", tempo_total_helper(inicio_tempo_bloco, fim_tempo_bloco));
+	printf("%.3lf segs\n", tempo_total_helper(inicio_tempo_bloco, fim_tempo_bloco));
 }
 
 int contagem_serial(int **matriz)
@@ -172,7 +193,7 @@ int contagem_numeros_primos(int isSerial)
 		inicio_tempo_bloco = clock();
 		resultado = contagem_serial(matriz);
 		fim_tempo_bloco = clock();
-		printf("Tempo para contar em modo serial: %.7lf segs\n", tempo_total_helper(inicio_tempo_bloco, fim_tempo_bloco));
+		printf("Tempo para contar em modo serial: %.3lf segs\n", tempo_total_helper(inicio_tempo_bloco, fim_tempo_bloco));
 	}
 	else
 	{
@@ -189,7 +210,7 @@ int contagem_numeros_primos(int isSerial)
 		resultado = contagem_paralela(threads, blocoVerificado);
 		fim_tempo_bloco = clock();
 
-		printf("Tempo para contar com threads: %.7lf segs\n", tempo_total_helper(inicio_tempo_bloco, fim_tempo_bloco));
+		printf("Tempo para contar com threads: %.3lf segs\n", tempo_total_helper(inicio_tempo_bloco, fim_tempo_bloco));
 
 		pthread_mutex_destroy(&mutex_bloco);
 		pthread_mutex_destroy(&mutex_count_primos);
