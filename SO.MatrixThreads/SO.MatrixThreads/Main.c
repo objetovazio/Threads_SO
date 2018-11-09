@@ -8,21 +8,21 @@
 #pragma endregion 
 
 #pragma region Defines  
-#define LINHA_MATRIZ 15000	// Número total de linhas da matriz
-#define COLUNA_MATRIZ 15000    // Número total de colunas da matriz
+#define LINHA_MATRIZ  15000					// Número total de linhas da matriz
+#define COLUNA_MATRIZ 15000					// Número total de colunas da matriz
 
-#define LINHA_MB 1			// Quantidade de linhas de um macrobloco
-#define COLUNA_MB 1		// Quantidade de colunas de um macrobloco
+#define LINHA_MB  100						// Quantidade de linhas de um macrobloco
+#define COLUNA_MB 100						// Quantidade de colunas de um macrobloco
 
-#define VALOR_MAX 29999     // Valor máximo a ser preenchido na matriz
-#define VALOR_MIN 0			// Valor mínimo a ser preenchido na matriz
-
-#define NUM_THREADS 1		// Número de threads
-#define IS_SERIAL 1			// Se é modo serial
-#define SEED 7				
+#define VALOR_MAX 29999						// Valor máximo a ser preenchido na matriz
+#define VALOR_MIN 0							// Valor mínimo a ser preenchido na matriz
 
 #define TRUE 1					
 #define FALSE 0
+
+#define NUM_THREADS 8						// Número de threads
+#define IS_SERIAL FALSE						// TRUE para busca serial; FALSE para busca paralela
+#define SEED 10				
 #pragma endregion 
 
 #pragma region Variáveis Globais  
