@@ -8,20 +8,20 @@
 #pragma endregion 
 
 #pragma region Defines  
-#define LINHA_MATRIZ  15000					// Número total de linhas da matriz
-#define COLUNA_MATRIZ 15000					// Número total de colunas da matriz
+#define LINHA_MATRIZ  15000		// Número total de linhas da matriz
+#define COLUNA_MATRIZ 15000		// Número total de colunas da matriz
 
-#define LINHA_MB  100						// Quantidade de linhas de um macrobloco
-#define COLUNA_MB 100						// Quantidade de colunas de um macrobloco
+#define LINHA_MB  100			// Quantidade de linhas de um macrobloco
+#define COLUNA_MB 100			// Quantidade de colunas de um macrobloco
 
-#define VALOR_MAX 29999						// Valor máximo a ser preenchido na matriz
-#define VALOR_MIN 0							// Valor mínimo a ser preenchido na matriz
+#define VALOR_MAX 29999			// Valor máximo a ser preenchido na matriz
+#define VALOR_MIN 0				// Valor mínimo a ser preenchido na matriz
 
 #define TRUE 1					
 #define FALSE 0
 
-#define NUM_THREADS 8						// Número de threads
-#define IS_SERIAL FALSE						// TRUE para busca serial; FALSE para busca paralela
+#define NUM_THREADS 8			// Número de threads
+#define IS_SERIAL TRUE			// TRUE para busca serial; FALSE para busca paralela
 #define SEED 10				
 #pragma endregion 
 
@@ -35,7 +35,7 @@ struct bloco {
 };
 typedef struct bloco tBloco, *pBloco;
 
-int total_numeros_primos = 0;
+unsigned int total_numeros_primos = 0;
 double inicio_tempo_execucao, fim_tempo_execucao, tempo_total_execucao = 0;
 int total_blocos, contador_blocos;
 double inicio_tempo_bloco, fim_tempo_bloco;
@@ -59,6 +59,11 @@ void instanciar_matriz(int qtd_linhas, int qtd_colunas);
 void preencher_matriz(int inicio, int fim, int seed);
 
 /**
+ * Desaloca matriz
+ */
+void desalocar_matriz(int qtd_linhas, int qtd_colunas);
+
+/**
  * Faz a contagem de números primos de forma serial (sequencial)
  */
 int contagem_serial(int **matriz);
@@ -79,14 +84,18 @@ double tempo_total_helper(double inicio, double fim);
 void imprimir_matriz();
 
 /**
- * Desaloca matriz
+ * Função responsável pela criação das threads e por aguardar o processamento de cada uma.
  */
-void desalocar_matriz(int qtd_linhas, int qtd_colunas);
-
 int contagem_paralela(pthread_t threads[NUM_THREADS], tBloco *blocoVerificado);
 
+/**
+ * Função de contagem que é executada em paralelo por cada threads criada.
+ */
 void* contagem_thread(void *id);
 
+/**
+ * Função de contagem base, que verifica o tipo de contagem e chama as demais funções para realizá-la
+ */
 int contagem_numeros_primos(int isSerial);
 #pragma endregion
 
@@ -94,7 +103,10 @@ int main()
 {
 	printf("\t\t..::Iniciando o programa::..\n\n");
 	printf("Matrix: %dx%d\tMacrobloco: %dx%d\n", LINHA_MATRIZ, COLUNA_MATRIZ, LINHA_MB, COLUNA_MB);
-	printf("Serial: %s\t%d Threads\n\n", IS_SERIAL ? "Sim" : "Nao", NUM_THREADS);
+	printf("Serial: %s\t", IS_SERIAL ? "Sim" : "Nao", NUM_THREADS);
+	
+	if(!IS_SERIAL) printf("%d Threads\n\n", NUM_THREADS);
+	else printf("\n\n");
 
 	inicio_tempo_execucao = clock();
 	printf("Instanciando matriz: ");
@@ -227,7 +239,7 @@ int contagem_paralela(pthread_t *threads, tBloco *bloco_verificado_local)
 
 	for (int i = 0; i < NUM_THREADS; i++)
 	{
-		int *thread_id = (int*)malloc(sizeof(int*));
+		int *thread_id = (int*)malloc(sizeof(int*)); // Id da threads a ser criada
 		*thread_id = i;
 
 		/* Em caso de sucesso, pthread_create retorna 0 */
